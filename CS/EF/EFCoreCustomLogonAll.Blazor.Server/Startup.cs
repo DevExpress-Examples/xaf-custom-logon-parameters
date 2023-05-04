@@ -1,4 +1,4 @@
-﻿using DevExpress.ExpressApp.Security;
+using DevExpress.ExpressApp.Security;
 using DevExpress.ExpressApp.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.Services;
@@ -111,5 +111,4 @@ public class Startup {
 
         app.UseDemoData();
     }
-
 }
