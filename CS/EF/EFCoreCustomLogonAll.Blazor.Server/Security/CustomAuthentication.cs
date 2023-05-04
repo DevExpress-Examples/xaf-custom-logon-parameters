@@ -1,8 +1,10 @@
-﻿using DevExpress.ExpressApp;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base.Security;
 using EFCoreCustomLogonAll.Module.BusinessObjects;
+
 namespace EFCustomLogon.Module.BusinessObjects;
+
 public class CustomAuthentication : AuthenticationBase, IAuthenticationStandard {
     private CustomLogonParameters customLogonParameters;
     public CustomAuthentication() {
