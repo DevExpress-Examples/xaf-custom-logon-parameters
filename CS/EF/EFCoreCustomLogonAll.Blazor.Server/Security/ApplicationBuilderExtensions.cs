@@ -1,4 +1,5 @@
-﻿using DevExpress.ExpressApp.Core;
+using DevExpress.ExpressApp.Core;
+
 namespace EFCoreCustomLogonAll.Blazor.Server.Security;
 
 static class ApplicationBuilderExtensions {
