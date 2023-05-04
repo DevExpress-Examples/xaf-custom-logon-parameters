@@ -1,4 +1,4 @@
-﻿using DevExpress.ExpressApp;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Core;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 
 namespace EFCustomLogon.Module.BusinessObjects;
+
 [DomainComponent]
 [DisplayName("Log In")]
 public class CustomLogonParameters : INotifyPropertyChanged, IDisposable, IServiceProviderConsumer {
