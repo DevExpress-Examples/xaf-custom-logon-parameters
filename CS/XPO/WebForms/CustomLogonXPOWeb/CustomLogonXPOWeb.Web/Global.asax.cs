@@ -63,7 +63,7 @@ namespace CustomLogonXPOWeb.Web {
                     };
                 }
             }
-       ((CustomLogonParameters)e.LogonParameters).RefreshPersistentObjects(e.ObjectSpace);
+            ((CustomLogonParameters)e.LogonParameters).RefreshPersistentObjects(e.ObjectSpace);
         }
         protected void Application_BeginRequest(Object sender, EventArgs e) {
         }
