@@ -88,9 +88,6 @@ public class CustomLogonParameters : INotifyPropertyChanged, IDisposable, IServi
     }
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public void RefreshPersistentObjects(IObjectSpace objectSpace) {
-        ApplicationUser = UserName == null ? null : objectSpace.FirstOrDefault<ApplicationUser>(e => e.UserName == UserName);
-    }
     void IServiceProviderConsumer.SetServiceProvider(IServiceProvider serviceProvider) {
         this.serviceProvider = serviceProvider;
     }
