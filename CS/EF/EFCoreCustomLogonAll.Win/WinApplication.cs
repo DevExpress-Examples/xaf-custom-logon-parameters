@@ -38,7 +38,7 @@ public class EFCoreCustomLogonAllWindowsFormsApplication : WinApplication {
                 };
             }
         }
-    ((CustomLogonParameters)e.LogonParameters).RefreshPersistentObjects(e.ObjectSpace);
+    	((CustomLogonParameters)e.LogonParameters).RefreshPersistentObjects(e.ObjectSpace);
     }
     private void EFCoreCustomLogonAllWindowsFormsApplication_CustomizeLanguagesList(object sender, CustomizeLanguagesListEventArgs e) {
         string userLanguageName = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
