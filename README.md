@@ -17,7 +17,7 @@ This example demonstrates how to customize standard authentication behavior and 
 3. Implement [custom authentication](./CS/EF/EFCoreCustomLogonAll.Blazor.Server/Security/CustomAuthentication.cs) that uses created custom logon parameters..
 4. Implement a custom [authentication provider](./CS/EF/EFCoreCustomLogonAll.Blazor.Server/Security/CustomAuthenticationStandardProvider.cs) that creates an instance of the defined custom authentication.
 5. Pass custom classes to the Security System. For an example, refer to the following file - [Startup.cs](./CS/EF/EFCoreCustomLogonAll.Blazor.Server/Startup.cs#L73-L78).
-6. Add demo data.
+6. Add [demo data](./CS/EF/EFCoreCustomLogonAll.Module/DatabaseUpdate/Updater.cs).
 7. Generate a demo database.
 8. Run the application.
 
