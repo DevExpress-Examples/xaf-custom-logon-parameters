@@ -8,6 +8,7 @@ using DevExpress.ExpressApp.EF;
 using DevExpress.Persistent.BaseImpl.EF;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using EFCoreCustomLogonAll.Module.BusinessObjects;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EFCoreCustomLogonAll.Module.DatabaseUpdate;
 
@@ -25,53 +26,32 @@ public class Updater : ModuleUpdater {
         //    theObject.Name = name;
         //}
 #if !RELEASE
-        ApplicationUser sampleUser = ObjectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == "User");
-        if(sampleUser == null) {
-            sampleUser = ObjectSpace.CreateObject<ApplicationUser>();
-            sampleUser.UserName = "User";
-            // Set a password if the standard authentication type is used
-            sampleUser.SetPassword("");
+        var defaultRole = CreateDefaultRole();
+        var adminRole = CreateAdminRole();
+        ObjectSpace.CommitChanges(); //This line persists created object(s).  
 
-            // The UserLoginInfo object requires a user object Id (Oid).
-            // Commit the user object to the database before you create a UserLoginInfo object. This will correctly initialize the user key property.
-            ObjectSpace.CommitChanges(); //This line persists created object(s).
-            ((ISecurityUserWithLoginInfo)sampleUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, ObjectSpace.GetKeyValueAsString(sampleUser));
-        }
-        PermissionPolicyRole defaultRole = CreateDefaultRole();
-        sampleUser.Roles.Add(defaultRole);
-
-        ApplicationUser userAdmin = ObjectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == "Admin");
+        UserManager userManager = ObjectSpace.ServiceProvider.GetRequiredService<UserManager>();
+        ApplicationUser userAdmin = userManager.FindUserByName<ApplicationUser>(ObjectSpace, "Admin");
+        // If a user named 'Admin' doesn't exist in the database, create this user.
         if(userAdmin == null) {
-            userAdmin = ObjectSpace.CreateObject<ApplicationUser>();
-            userAdmin.UserName = "Admin";
-            // Set a password if the standard authentication type is used
-            userAdmin.SetPassword("");
+            // Set a password if the standard authentication type is used.
+            string EmptyPassword = "";
+            userAdmin = userManager.CreateUser<ApplicationUser>(ObjectSpace, "Admin", EmptyPassword, (user) => {
+                // Add the Administrators role to the user.
+                user.Roles.Add(adminRole);
+            }).User;
+        }
 
-            // The UserLoginInfo object requires a user object Id (Oid).
-            // Commit the user object to the database before you create a UserLoginInfo object. This will correctly initialize the user key property.
-            ObjectSpace.CommitChanges(); //This line persists created object(s).
-            ((ISecurityUserWithLoginInfo)userAdmin).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, ObjectSpace.GetKeyValueAsString(userAdmin));
-        }
-		// If a role with the Administrators name doesn't exist in the database, create this role
-        PermissionPolicyRole adminRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administrators");
-        if(adminRole == null) {
-            adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
-            adminRole.Name = "Administrators";
-        }
-        adminRole.IsAdministrative = true;
-		userAdmin.Roles.Add(adminRole);
         if(ObjectSpace.FindObject<Company>(null) == null) {
             Company company1 = ObjectSpace.CreateObject<Company>();
             company1.Name = "Company 1";
             company1.ApplicationUsers.Add(userAdmin);
-            ApplicationUser user1 = ObjectSpace.CreateObject<ApplicationUser>();
-            user1.UserName = "Sam";
-            user1.SetPassword("");
-            user1.Roles.Add(defaultRole);
-            ApplicationUser user2 = ObjectSpace.CreateObject<ApplicationUser>();
-            user2.UserName = "John";
-            user2.SetPassword("");
-            user2.Roles.Add(defaultRole);
+            ApplicationUser user1 = userManager.CreateUser<ApplicationUser>(ObjectSpace, "Sam", "", (user) => {
+                user.Roles.Add(defaultRole);
+            }).User;
+            ApplicationUser user2 = userManager.CreateUser<ApplicationUser>(ObjectSpace, "John", "", (user) => {
+                user.Roles.Add(defaultRole);
+            }).User;
             Company company2 = ObjectSpace.CreateObject<Company>();
             company2.Name = "Company 2";
             company2.ApplicationUsers.Add(user1);
@@ -96,9 +76,18 @@ public class Updater : ModuleUpdater {
             defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read, SecurityPermissionState.Deny);
             defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
-			defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
+            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create, SecurityPermissionState.Allow);
         }
         return defaultRole;
+    }
+    private PermissionPolicyRole CreateAdminRole() {
+        PermissionPolicyRole adminRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administrators");
+        if(adminRole == null) {
+            adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
+            adminRole.Name = "Administrators";
+            adminRole.IsAdministrative = true;
+        }
+        return adminRole;
     }
 }

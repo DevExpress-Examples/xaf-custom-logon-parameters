@@ -1,7 +1,7 @@
 using DevExpress.ExpressApp.Security;
 using Microsoft.Extensions.Options;
 
-namespace EFCustomLogon.Module.BusinessObjects;
+namespace EFCoreCustomLogonAll.Module.Security;
 
 public class CustomAuthenticationStandardProvider : AuthenticationStandardProviderV2 {
     public CustomAuthenticationStandardProvider(IOptions<AuthenticationStandardProviderOptions> options,

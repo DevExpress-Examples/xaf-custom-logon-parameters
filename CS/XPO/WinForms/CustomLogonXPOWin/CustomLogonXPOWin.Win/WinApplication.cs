@@ -15,7 +15,7 @@ namespace CustomLogonXPOWin.Win;
 // For more typical usage scenarios, be sure to check out https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.Win.WinApplication._members
 public class CustomLogonXPOWinWindowsFormsApplication : WinApplication {
     public CustomLogonXPOWinWindowsFormsApplication() {
-		SplashScreen = new DXSplashScreen(typeof(XafSplashScreen), new DefaultOverlayFormOptions());
+        SplashScreen = new DXSplashScreen(typeof(XafSplashScreen), new DefaultOverlayFormOptions());
         ApplicationName = "CustomLogonXPOWin";
         CheckCompatibilityType = DevExpress.ExpressApp.CheckCompatibilityType.DatabaseSchema;
         UseOldTemplates = false;
@@ -24,18 +24,13 @@ public class CustomLogonXPOWinWindowsFormsApplication : WinApplication {
         this.CreateCustomLogonWindowObjectSpace += application_CreateCustomLogonWindowObjectSpace;
     }
     private static void application_CreateCustomLogonWindowObjectSpace(object sender, CreateCustomLogonWindowObjectSpaceEventArgs e) {
-        e.ObjectSpace = ((XafApplication)sender).CreateObjectSpace(typeof(CustomLogonParameters));
-        NonPersistentObjectSpace nonPersistentObjectSpace = e.ObjectSpace as NonPersistentObjectSpace;
+        var application = (XafApplication)sender;
+        e.ObjectSpace = application.CreateObjectSpace(typeof(CustomLogonParameters));
+        CompositeObjectSpace nonPersistentObjectSpace = e.ObjectSpace as CompositeObjectSpace;
         if(nonPersistentObjectSpace != null) {
-            if(!nonPersistentObjectSpace.IsKnownType(typeof(Company), true)) {
-                IObjectSpace additionalObjectSpace = ((XafApplication)sender).CreateObjectSpace(typeof(Company));
-                nonPersistentObjectSpace.AdditionalObjectSpaces.Add(additionalObjectSpace);
-                nonPersistentObjectSpace.Disposed += (s2, e2) => {
-                    additionalObjectSpace.Dispose();
-                };
-            }
+            nonPersistentObjectSpace.PopulateAdditionalObjectSpaces(application);
         }
-           ((CustomLogonParameters)e.LogonParameters).RefreshPersistentObjects(e.ObjectSpace);
+        ((CustomLogonParameters)e.LogonParameters).RefreshPersistentObjects(e.ObjectSpace);
     }
     private void CustomLogonXPOWinWindowsFormsApplication_CustomizeLanguagesList(object sender, CustomizeLanguagesListEventArgs e) {
         string userLanguageName = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
@@ -51,18 +46,17 @@ public class CustomLogonXPOWinWindowsFormsApplication : WinApplication {
         if(System.Diagnostics.Debugger.IsAttached) {
             e.Updater.Update();
             e.Handled = true;
-        }
-        else {
-			string message = "The application cannot connect to the specified database, " +
-				"because the database doesn't exist, its version is older " +
-				"than that of the application or its schema does not match " +
-				"the ORM data model structure. To avoid this error, use one " +
-				"of the solutions from the https://www.devexpress.com/kb=T367835 KB Article.";
+        } else {
+            string message = "The application cannot connect to the specified database, " +
+                "because the database doesn't exist, its version is older " +
+                "than that of the application or its schema does not match " +
+                "the ORM data model structure. To avoid this error, use one " +
+                "of the solutions from the https://www.devexpress.com/kb=T367835 KB Article.";
 
-			if(e.CompatibilityError != null && e.CompatibilityError.Exception != null) {
-				message += "\r\n\r\nInner exception: " + e.CompatibilityError.Exception.Message;
-			}
-			throw new InvalidOperationException(message);
+            if(e.CompatibilityError != null && e.CompatibilityError.Exception != null) {
+                message += "\r\n\r\nInner exception: " + e.CompatibilityError.Exception.Message;
+            }
+            throw new InvalidOperationException(message);
         }
 #endif
     }

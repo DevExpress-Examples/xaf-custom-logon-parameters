@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.EntityFrameworkCore;
 using EFCoreCustomLogonAll.Blazor.Server.Services;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
-using EFCustomLogon.Module.BusinessObjects;
-using EFCoreCustomLogonAll.Blazor.Server.Security;
+using EFCoreCustomLogonAll.Module.BusinessObjects;
+using EFCoreCustomLogonAll.Module.Security;
 
 namespace EFCoreCustomLogonAll.Blazor.Server;
 
@@ -57,26 +57,22 @@ public class Startup {
                     options.UseSqlServer(connectionString);
                     options.UseChangeTrackingProxies();
                     options.UseObjectSpaceLinkProxies();
+                    options.UseXafServiceProviderContainer(serviceProvider);
                     options.UseLazyLoadingProxies();
                 })
                 .AddNonPersistent();
             builder.Security
                 .UseIntegratedMode(options => {
                     options.RoleType = typeof(PermissionPolicyRole);
-                    // ApplicationUser descends from PermissionPolicyUser and supports the OAuth authentication. For more information, refer to the following topic: https://docs.devexpress.com/eXpressAppFramework/402197
-                    // If your application uses PermissionPolicyUser or a custom user type, set the UserType property as follows:
-                    options.UserType = typeof(EFCoreCustomLogonAll.Module.BusinessObjects.ApplicationUser);
-                    // ApplicationUserLoginInfo is only necessary for applications that use the ApplicationUser user type.
-                    // If you use PermissionPolicyUser or a custom user type, comment out the following line:
-                    options.UserLoginInfoType = typeof(EFCoreCustomLogonAll.Module.BusinessObjects.ApplicationUserLoginInfo);
+                    options.UserType = typeof(ApplicationUser);
+                    options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
+                    options.Events.OnSecurityStrategyCreated = securityStrategyBase => {
+                        var securityStrategy = (SecurityStrategy)securityStrategyBase;
+                        securityStrategy.AnonymousAllowedTypes.Add(typeof(Company));
+                        securityStrategy.AnonymousAllowedTypes.Add(typeof(ApplicationUser));
+                    };
                 })
-                  .AddAuthenticationProvider<AuthenticationStandardProviderOptions, CustomAuthenticationStandardProvider>(options => {
-                      options.IsSupportChangePassword = true;
-                      options.LogonParametersType = typeof(CustomLogonParameters);
-                  });
-            //.AddPasswordAuthentication(options => {
-            //    options.IsSupportChangePassword = true;
-            //});
+                .AddAuthenticationProvider<CustomAuthenticationStandardProvider>();
         });
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
             options.LoginPath = "/LoginPage";
@@ -96,8 +92,6 @@ public class Startup {
         app.UseRequestLocalization();
         app.UseStaticFiles();
 
-        // app.CreateDB();
-
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
@@ -108,7 +102,5 @@ public class Startup {
             endpoints.MapFallbackToPage("/_Host");
             endpoints.MapControllers();
         });
-
-        app.UseDemoData();
     }
 }

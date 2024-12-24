@@ -12,6 +12,7 @@ using DevExpress.XtraEditors;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using DevExpress.ExpressApp.Design;
 using EFCoreCustomLogonAll.Module.BusinessObjects;
+using EFCoreCustomLogonAll.Module.Security;
 
 namespace EFCoreCustomLogonAll.Win;
 
@@ -25,7 +26,7 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
                 options.AllowValidationDetailsAccess = false;
             })
             .Add<EFCoreCustomLogonAll.Module.EFCoreCustomLogonAllModule>()
-        	.Add<EFCoreCustomLogonAllWinModule>();
+            .Add<EFCoreCustomLogonAllWinModule>();
         builder.ObjectSpaceProviders
             .AddSecuredEFCore().WithDbContext<EFCoreCustomLogonAll.Module.BusinessObjects.EFCoreCustomLogonAllEFCoreDbContext>((application, options) => {
                 // Uncomment this code to use an in-memory database. This database is recreated each time the server starts. With the in-memory database, you don't need to make a migration when the data model is changed.
@@ -40,17 +41,16 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
         builder.Security
             .UseIntegratedMode(options => {
                 options.RoleType = typeof(PermissionPolicyRole);
-                options.UserType = typeof(EFCoreCustomLogonAll.Module.BusinessObjects.ApplicationUser);
-                options.UserLoginInfoType = typeof(EFCoreCustomLogonAll.Module.BusinessObjects.ApplicationUserLoginInfo);
+                options.UserType = typeof(ApplicationUser);
+                options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
                 options.Events.OnSecurityStrategyCreated = securityStrategyBase => {
-                    // ...
                     var securityStrategy = (SecurityStrategy)securityStrategyBase;
-                    securityStrategy.Authentication = new CustomAuthentication();
                     securityStrategy.AnonymousAllowedTypes.Add(typeof(Company));
                     securityStrategy.AnonymousAllowedTypes.Add(typeof(ApplicationUser));
                 };
             })
-            .UsePasswordAuthentication();
+            .AddExternalAuthentication<CustomAuthenticationStandardProvider>();
+
         builder.AddBuildStep(application => {
             application.ConnectionString = connectionString;
 #if DEBUG
@@ -59,6 +59,7 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
             }
 #endif
         });
+
         var winApplication = builder.Build();
         return winApplication;
     }

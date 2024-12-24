@@ -13,6 +13,7 @@ using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using DevExpress.ExpressApp.Utils;
 using DevExpress.ExpressApp.Win.Utils;
 using System.Reflection;
+using EFCoreCustomLogonAll.Module.Security;
 
 namespace EFCoreCustomLogonAll.Win;
 
@@ -45,7 +46,7 @@ static class Program {
         WindowsFormsSettings.LoadApplicationSettings();
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-		DevExpress.Utils.ToolTipController.DefaultController.ToolTipType = DevExpress.Utils.ToolTipType.SuperTip;
+        DevExpress.Utils.ToolTipController.DefaultController.ToolTipType = DevExpress.Utils.ToolTipType.SuperTip;
         if(Tracing.GetFileLocationFromSettings() == DevExpress.Persistent.Base.FileLocation.CurrentUserApplicationDataFolder) {
             Tracing.LocalUserAppDataPath = Application.LocalUserAppDataPath;
         }
@@ -63,7 +64,7 @@ static class Program {
         ArgumentNullException.ThrowIfNull(connectionString);
         var winApplication = ApplicationBuilder.BuildApplication(connectionString);
 
-        if (ContainsArgument(args, "updateDatabase")) {
+        if(ContainsArgument(args, "updateDatabase")) {
             using var dbUpdater = new WinDBUpdater(() => winApplication);
             return dbUpdater.Update(
                 forceUpdate: ContainsArgument(args, "forceUpdate"),
@@ -73,8 +74,7 @@ static class Program {
         try {
             winApplication.Setup();
             winApplication.Start();
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             winApplication.StopSplash();
             winApplication.HandleException(e);
         }
