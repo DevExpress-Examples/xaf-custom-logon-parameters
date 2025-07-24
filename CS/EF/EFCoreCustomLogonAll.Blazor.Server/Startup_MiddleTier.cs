@@ -2,14 +2,19 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.Services;
-using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
+using DevExpress.ExpressApp.Security;
 using EFCoreCustomLogonAll.Blazor.Server.Authentication;
 using EFCoreCustomLogonAll.Blazor.Server.Services;
 using EFCoreCustomLogonAll.Module.Authentication;
 using EFCoreCustomLogonAll.Module.BusinessObjects;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace EFCoreCustomLogonAll.Blazor.Server;
 
@@ -25,7 +30,8 @@ public class Startup {
     public void ConfigureServices(IServiceCollection services) {
         services.AddSingleton(typeof(Microsoft.AspNetCore.SignalR.HubConnectionHandler<>), typeof(ProxyHubConnectionHandler<>));
 
-        services.AddScoped<ILogonDataProvider, BlazorLogonDataProvider>();
+        //services.AddScoped<ILogonDataProvider, BlazorLogonDataProvider>();
+        services.AddScoped<ILogonDataProvider, MiddleTierClientLogonDataProvider>();
 
         services.AddRazorPages();
         services.AddServerSideBlazor();
@@ -40,55 +46,51 @@ public class Startup {
                 })
                 .Add<EFCoreCustomLogonAll.Module.EFCoreCustomLogonAllModule>()
                 .Add<EFCoreCustomLogonAllBlazorModule>();
+
             builder.ObjectSpaceProviders
-                .AddSecuredEFCore().WithDbContext<EFCoreCustomLogonAllEFCoreDbContext>((serviceProvider, options) => {
-                    // Uncomment this code to use an in-memory database. This database is recreated each time the server starts. With the in-memory database, you don't need to make a migration when the data model is changed.
-                    // Do not use this code in production environment to avoid data loss.
-                    // We recommend that you refer to the following help topic before you use an in-memory database: https://docs.microsoft.com/en-us/ef/core/testing/in-memory
-                    //options.UseInMemoryDatabase("InMemory");
-                    string connectionString = null;
-                    if(Configuration.GetConnectionString("ConnectionString") != null) {
-                        connectionString = Configuration.GetConnectionString("ConnectionString");
-                    }
-#if EASYTEST
-                    if(Configuration.GetConnectionString("EasyTestConnectionString") != null) {
-                        connectionString = Configuration.GetConnectionString("EasyTestConnectionString");
-                    }
-#endif
-                    ArgumentNullException.ThrowIfNull(connectionString);
-                    options.UseSqlServer(connectionString);
-                    options.UseChangeTrackingProxies();
-                    options.UseObjectSpaceLinkProxies();
-                    options.UseXafServiceProviderContainer(serviceProvider);
-                    options.UseLazyLoadingProxies();
-                })
-                .AddNonPersistent();
+                .AddEFCore(options => options.PreFetchReferenceProperties())
+                    .WithDbContext<EFCoreCustomLogonAllEFCoreDbContext>((IServiceProvider serviceProvider, DbContextOptionsBuilder options) => {
+                        options.UseMiddleTier(serviceProvider.GetRequiredService<ISecurityStrategyBase>());
+                        options.UseChangeTrackingProxies();
+                        options.UseObjectSpaceLinkProxies();
+                    })
+                 .AddNonPersistent();
+
             builder.Security
-                .UseIntegratedMode(options => {
-                    options.Lockout.Enabled = true;
-                    options.RoleType = typeof(PermissionPolicyRole);
-                    options.UserType = typeof(ApplicationUser);
-                    options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
+                .UseMiddleTierMode(options => {
+#if DEBUG
+                    options.WaitForMiddleTierServerReady();
+#endif
+                    options.BaseAddress = new Uri("https://localhost:44318/");
+                    options.Events.OnCustomAuthenticate = (sender, security, args) => {
+                        args.Handled = true;
+                        HttpResponseMessage msg = args.HttpClient.PostAsJsonAsync("api/Authentication/Authenticate", (CustomLogonParameters)args.LogonParameters).GetAwaiter().GetResult();
+                        string token = (string)msg.Content.ReadFromJsonAsync(typeof(string)).GetAwaiter().GetResult();
+                        if(msg.StatusCode == HttpStatusCode.Unauthorized) {
+                            XafExceptions.Authentication.ThrowAuthenticationFailedFromResponse(token);
+                        }
+                        msg.EnsureSuccessStatusCode();
+                        args.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    };
                 })
-                .AddPasswordAuthentication(options => {
-                    options.IsSupportChangePassword = true;
-                    options.LogonParametersType = typeof(CustomLogonParameters);
-                });
+                .AddPasswordAuthentication();
 
             builder.AddBuildStep(application => {
-#if DEBUG
-                application.CheckCompatibilityType = DevExpress.ExpressApp.CheckCompatibilityType.DatabaseSchema;
-                application.DatabaseUpdateMode = DatabaseUpdateMode.UpdateDatabaseAlways;
-                application.DatabaseVersionMismatch += (s, e) => {
-                    e.Updater.Update();
-                    e.Handled = true;
-                };
-#endif
+                application.DatabaseUpdateMode = DatabaseUpdateMode.Never;
             });
         });
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
-            options.LoginPath = "/LoginPage";
-        });
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options => {
+                options.LoginPath = "/LoginPage";
+            })
+            .AddJwtBearer(options => {
+                options.TokenValidationParameters = new TokenValidationParameters() {
+                    ValidIssuer = Configuration["Authentication:Jwt:ValidIssuer"],
+                    ValidAudience = Configuration["Authentication:Jwt:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:Jwt:IssuerSigningKey"])),
+                    AuthenticationType = JwtBearerDefaults.AuthenticationScheme
+                };
+            });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -6,8 +6,4 @@
     <SchemaModule Name="SystemModule" Version="22.2.3.0" IsNewNode="True" />
     <SchemaModule Name="SystemWindowsFormsModule" Version="22.2.3.0" IsNewNode="True" />
   </SchemaModules>
-  <Views>
-    <ListView Id="ApplicationUser_LookupListView" AllowNew="False" />
-    <ListView Id="Company_LookupListView" AllowNew="False" />
-  </Views>
 </Application>

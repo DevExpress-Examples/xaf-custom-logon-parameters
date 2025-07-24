@@ -7,14 +7,16 @@ using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 namespace EFCoreCustomLogonAll.Module.BusinessObjects;
 
 [DefaultProperty(nameof(UserName))]
-public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo {
-    public ApplicationUser() : base() {
-        UserLogins = new ObservableCollection<ApplicationUserLoginInfo>();
-    }
+public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout {
+    [Browsable(false)]
+    public virtual int AccessFailedCount { get; set; }
+
+    [Browsable(false)]
+    public virtual DateTime LockoutEnd { get; set; }
 
     [Browsable(false)]
     [DevExpress.ExpressApp.DC.Aggregated]
-    public virtual IList<ApplicationUserLoginInfo> UserLogins { get; set; }
+    public virtual IList<ApplicationUserLoginInfo> UserLogins { get; set; } = new ObservableCollection<ApplicationUserLoginInfo>();
 
     IEnumerable<ISecurityUserLoginInfo> IOAuthSecurityUser.UserLogins => UserLogins.OfType<ISecurityUserLoginInfo>();
 
@@ -25,5 +27,6 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo 
         result.User = this;
         return result;
     }
+
     public virtual Company Company { get; set; }
 }

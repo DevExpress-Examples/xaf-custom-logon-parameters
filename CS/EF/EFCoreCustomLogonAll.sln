@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCoreCustomLogonAll.Module
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCoreCustomLogonAll.Win", "EFCoreCustomLogonAll.Win\EFCoreCustomLogonAll.Win.csproj", "{3EC41974-367C-4CAD-8881-9CB789EE3A9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCoreCustomLogonAll.MiddleTier", "EFCoreCustomLogonAll.MiddleTier\EFCoreCustomLogonAll.MiddleTier.csproj", "{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCoreCustomLogonAll.Blazor.Server.MiddleTier", "EFCoreCustomLogonAll.Blazor.Server\EFCoreCustomLogonAll.Blazor.Server.MiddleTier.csproj", "{CFF780DB-FD53-4D16-12F4-F5E77409CD35}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,6 +20,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46EA6253-672C-4212-94FF-D52BF6211158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46EA6253-672C-4212-94FF-D52BF6211158}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46EA6253-672C-4212-94FF-D52BF6211158}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
+		{46EA6253-672C-4212-94FF-D52BF6211158}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
+		{46EA6253-672C-4212-94FF-D52BF6211158}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46EA6253-672C-4212-94FF-D52BF6211158}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59EB4ADB-9AF6-47A9-9646-105B7ABE1CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59EB4ADB-9AF6-47A9-9646-105B7ABE1CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59EB4ADB-9AF6-47A9-9646-105B7ABE1CD5}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
@@ -28,12 +38,18 @@ Global
 		{3EC41974-367C-4CAD-8881-9CB789EE3A9E}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
 		{3EC41974-367C-4CAD-8881-9CB789EE3A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EC41974-367C-4CAD-8881-9CB789EE3A9E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{46EA6253-672C-4212-94FF-D52BF6211158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{46EA6253-672C-4212-94FF-D52BF6211158}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{46EA6253-672C-4212-94FF-D52BF6211158}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
-		{46EA6253-672C-4212-94FF-D52BF6211158}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
-		{46EA6253-672C-4212-94FF-D52BF6211158}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46EA6253-672C-4212-94FF-D52BF6211158}.Release|Any CPU.Build.0 = Release|Any CPU
+		{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
+		{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
+		{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{654286F2-CA9D-49AD-B5D0-C948FCE5A7DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFF780DB-FD53-4D16-12F4-F5E77409CD35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFF780DB-FD53-4D16-12F4-F5E77409CD35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFF780DB-FD53-4D16-12F4-F5E77409CD35}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
+		{CFF780DB-FD53-4D16-12F4-F5E77409CD35}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
+		{CFF780DB-FD53-4D16-12F4-F5E77409CD35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFF780DB-FD53-4D16-12F4-F5E77409CD35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

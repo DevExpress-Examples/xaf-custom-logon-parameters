@@ -1,21 +1,18 @@
 ﻿using DevExpress.ExpressApp;
-using DevExpress.ExpressApp.Blazor.DesignTime;
-using DevExpress.ExpressApp.Blazor.Services;
+using DevExpress.ExpressApp.AspNetCore.DesignTime;
 using DevExpress.ExpressApp.Design;
 using DevExpress.ExpressApp.Security.ClientServer.WebApi;
 using DevExpress.ExpressApp.Utils;
 using EFCoreCustomLogonAll.Module.Authentication;
 using System.Reflection;
 
-namespace EFCoreCustomLogonAll.Blazor.Server;
+namespace EFCoreCustomLogonAll.WebApi;
 
 public class Program : IDesignTimeApplicationFactory {
     private static bool ContainsArgument(string[] args, string argument) {
         return args.Any(arg => arg.TrimStart('/').TrimStart('-').ToLower() == argument.ToLower());
     }
     public static int Main(string[] args) {
-        WebApiDataServerHelper.AddKnownType(typeof(CustomLogonParameters));
-
         if(ContainsArgument(args, "help") || ContainsArgument(args, "h")) {
             Console.WriteLine("Updates the database when its version does not match the application's version.");
             Console.WriteLine();
@@ -27,28 +24,27 @@ public class Program : IDesignTimeApplicationFactory {
             Console.WriteLine($"Exit codes: 0 - {DBUpdaterStatus.UpdateCompleted}");
             Console.WriteLine($"            1 - {DBUpdaterStatus.UpdateError}");
             Console.WriteLine($"            2 - {DBUpdaterStatus.UpdateNotNeeded}");
-        }
-        else {
+        } else {
             DevExpress.ExpressApp.FrameworkSettings.DefaultSettingsCompatibilityMode = DevExpress.ExpressApp.FrameworkSettingsCompatibilityMode.Latest;
+            DevExpress.ExpressApp.Security.SecurityStrategy.AutoAssociationReferencePropertyMode = DevExpress.ExpressApp.Security.ReferenceWithoutAssociationPermissionsMode.AllMembers;
             IHost host = CreateHostBuilder(args).Build();
             if(ContainsArgument(args, "updateDatabase")) {
                 using(var serviceScope = host.Services.CreateScope()) {
                     return serviceScope.ServiceProvider.GetRequiredService<DevExpress.ExpressApp.Utils.IDBUpdater>().Update(ContainsArgument(args, "forceUpdate"), ContainsArgument(args, "silent"));
                 }
-            }
-            else {
+            } else {
                 host.Run();
             }
         }
         return 0;
+    }
+    XafApplication IDesignTimeApplicationFactory.Create() {
+        IHostBuilder hostBuilder = CreateHostBuilder(Array.Empty<string>());
+        return DesignTimeApplicationFactoryHelper.Create(hostBuilder);
     }
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder => {
                 webBuilder.UseStartup<Startup>();
             });
-    XafApplication IDesignTimeApplicationFactory.Create() {
-        IHostBuilder hostBuilder = CreateHostBuilder(Array.Empty<string>());
-        return DesignTimeApplicationFactoryHelper.Create(hostBuilder);
-    }
 }

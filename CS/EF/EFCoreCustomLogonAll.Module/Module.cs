@@ -25,15 +25,4 @@ public sealed class EFCoreCustomLogonAllModule : ModuleBase {
         ModuleUpdater updater = new DatabaseUpdate.Updater(objectSpace, versionFromDB);
         return new ModuleUpdater[] { updater };
     }
-    public override void Setup(XafApplication application) {
-        base.Setup(application);
-        application.CreateCustomLogonWindowObjectSpace += Application_CreateCustomLogonWindowObjectSpace;
-    }
-    private void Application_CreateCustomLogonWindowObjectSpace(object sender, CreateCustomLogonWindowObjectSpaceEventArgs e) {
-        XafApplication application = (XafApplication)sender;
-        e.ObjectSpace = application.CreateObjectSpace(typeof(CustomLogonParameters));
-        if(e.ObjectSpace is CompositeObjectSpace compositeObjectSpace) {
-            compositeObjectSpace.PopulateAdditionalObjectSpaces(application);
-        }
-    }
 }

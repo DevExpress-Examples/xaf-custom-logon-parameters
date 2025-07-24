@@ -7,19 +7,23 @@
     <FileVersion>1.0.0.0</FileVersion>
     <Configurations>Debug;Release;EasyTest</Configurations>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <AssemblyName>EFCoreCustomLogonAll.Blazor.Server</AssemblyName>
+	  <RootNamespace>EFCoreCustomLogonAll.Blazor.Server</RootNamespace>
+	  <BaseOutputPath>bin_MiddleTier\</BaseOutputPath>
+	  <BaseIntermediateOutputPath>obj_MiddleTier\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="bin_MiddleTier\**" />
-    <Compile Remove="obj_MiddleTier\**" />
-    <Content Remove="bin_MiddleTier\**" />
-    <Content Remove="obj_MiddleTier\**" />
-    <EmbeddedResource Remove="bin_MiddleTier\**" />
-    <EmbeddedResource Remove="obj_MiddleTier\**" />
-    <None Remove="bin_MiddleTier\**" />
-    <None Remove="obj_MiddleTier\**" />
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <Content Remove="bin\**" />
+    <Content Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Startup_MiddleTier.cs" />
+    <Compile Remove="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Model.xafml" />
@@ -30,8 +34,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-	  <PackageReference Include="DevExpress.ExpressApp.Security.EFCore.Extensions.Blazor" Version="25.1.3" />
     <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="25.1.3" />
+    <PackageReference Include="DevExpress.ExpressApp.Security.EFCore.Extensions.Blazor" Version="25.1.3" />
     <PackageReference Include="DevExpress.ExpressApp.Validation.Blazor" Version="25.1.3" />
   </ItemGroup>
   <ItemGroup>

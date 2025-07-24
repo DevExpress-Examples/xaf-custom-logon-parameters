@@ -1,7 +1,7 @@
 ﻿using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Updating;
 using DevExpress.ExpressApp.Win;
 using DevExpress.ExpressApp.Win.Utils;
-using EFCoreCustomLogonAll.Module.BusinessObjects;
 
 namespace EFCoreCustomLogonAll.Win;
 
@@ -22,25 +22,19 @@ public class EFCoreCustomLogonAllWindowsFormsApplication : WinApplication {
         }
     }
     private void EFCoreCustomLogonAllWindowsFormsApplication_DatabaseVersionMismatch(object sender, DevExpress.ExpressApp.DatabaseVersionMismatchEventArgs e) {
-#if EASYTEST
-        e.Updater.Update();
-        e.Handled = true;
-#else
-        if(System.Diagnostics.Debugger.IsAttached) {
-            e.Updater.Update();
-            e.Handled = true;
-        } else {
-            string message = "The application cannot connect to the specified database, " +
-                "because the database doesn't exist, its version is older " +
-                "than that of the application or its schema does not match " +
-                "the ORM data model structure. To avoid this error, use one " +
-                "of the solutions from the https://www.devexpress.com/kb=T367835 KB Article.";
+        string message = "Application cannot connect to the specified database.";
 
-            if(e.CompatibilityError != null && e.CompatibilityError.Exception != null) {
-                message += "\r\n\r\nInner exception: " + e.CompatibilityError.Exception.Message;
-            }
-            throw new InvalidOperationException(message);
+        CompatibilityDatabaseIsOldError isOldError = e.CompatibilityError as CompatibilityDatabaseIsOldError;
+        if(isOldError != null && isOldError.Module != null) {
+            message = "The client application cannot connect to the Middle Tier Application Server and its database. " +
+                      "To avoid this error, ensure that both the client and the server have the same modules set. Problematic module: " + isOldError.Module.Name +
+                      ". For more information, see https://docs.devexpress.com/eXpressAppFramework/113439/concepts/security-system/middle-tier-security-wcf-service#troubleshooting";
         }
-#endif
+        if(e.CompatibilityError == null) {
+            message = "You probably tried to update the database in Middle Tier Security mode from the client side. " +
+                      "In this mode, the server application updates the database automatically. " +
+                      "To disable the automatic database update, set the XafApplication.DatabaseUpdateMode property to the DatabaseUpdateMode.Never value in the client application.";
+        }
+        throw new InvalidOperationException(message);
     }
 }
