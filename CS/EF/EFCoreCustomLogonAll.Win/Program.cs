@@ -11,7 +11,6 @@ static class Program {
     /// </summary>
     [STAThread]
     public static int Main(string[] args) {
-        // TODO add description! IMPORTANT
         WebApiDataServerHelper.AddKnownType(typeof(CustomLogonParameters));
 
         DevExpress.ExpressApp.FrameworkSettings.DefaultSettingsCompatibilityMode = DevExpress.ExpressApp.FrameworkSettingsCompatibilityMode.Latest;

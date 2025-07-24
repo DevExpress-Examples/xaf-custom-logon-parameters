@@ -4,7 +4,6 @@ using EFCoreCustomLogonAll.Module.BusinessObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EFCoreCustomLogonAll.MiddleTier.Authentication {
-    // TODO description
     public class AuthenticationDataController : ControllerBase, IDisposable {
         IObjectSpace nonSecuredObjectSpace;
         private readonly INonSecuredObjectSpaceFactory? nonSecuredObjectSpaceFactory;
