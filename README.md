@@ -5,7 +5,7 @@
 <!-- default badges end -->
 # XAF - Customize Logon Parameters
 
-This example customizes standard authentication behavior and supply additional logon parameters in a XAF application. The default login form displays `User Name` and `Password` editors. This sample replaces `User Name` with `Company` and `Application User` lookup editors.
+This example customizes standard authentication behavior and supply additional logon parameters in a XAF application. The default login form displays **User Name** and **Password** editors. This sample replaces **User Name** with **Company** and **Application User** lookup editors.
 
 ![Login form](https://docs.devexpress.com/eXpressAppFramework/images/custom-logon-prameters-blazor.png)
 
@@ -19,7 +19,7 @@ This example customizes standard authentication behavior and supply additional l
 1. Create a custom logon parameter class that uses the `Company` class ([CustomLogonParameters.cs](./CS/EF/EFCoreCustomLogonAll.Module/Authentication/CustomLogonParameters.cs)).
 1. To access lists of companies and application users in login form (before authentication), implement data transfer objects (DTO) ([CompanyDTO.cs](./CS/EF/EFCoreCustomLogonAll.Module/Authentication/CompanyDTO.cs) / [ApplicationUserDTO.cs](./CS/EF/EFCoreCustomLogonAll.Module/Authentication/ApplicationUserDTO.cs)).
 1. Register the  `CustomLogonParameters` type as a known logon parameter type ([Program.cs (Blazor)](./CS/EF/EFCoreCustomLogonAll.Blazor.Server/Program.cs#L17) / [Program.cs (WinForms)](CS/EF/EFCoreCustomLogonAll.Win/Program.cs#L14)).
-1. A lookup editor displays the Edit button. Create a controller and call the [CustomizeViewItemControl](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.DetailViewExtensions.CustomizeViewItemControl.overloads) method to hide the button from the `Company` and `Application User` lookup editors ([CustomLogonParameterLookupActionVisibilityController.cs](./CS/EF/EFCoreCustomLogonAll.Blazor.Server/Authentication/CustomLogonParameterLookupActionVisibilityController.cs)).
+1. A lookup editor displays the Edit button. Create a controller and call the [CustomizeViewItemControl](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.DetailViewExtensions.CustomizeViewItemControl.overloads) method to hide the button from the **Company** and **Application User** lookup editors ([CustomLogonParameterLookupActionVisibilityController.cs](./CS/EF/EFCoreCustomLogonAll.Blazor.Server/Authentication/CustomLogonParameterLookupActionVisibilityController.cs)).
 
 For detailed instructions, refer to the following topic: [Customize Standard Authentication Behavior and Supply Additional Logon Parameters](https://docs.devexpress.com/eXpressAppFramework/404264/data-security-and-safety/security-system/authentication/customize-standard-authentication-behavior-and-supply-additional-logon-parameters/customize-authentication-behavior-blazor).
 
@@ -48,5 +48,6 @@ For detailed instructions, refer to the following topic: [Customize Standard Aut
 
 (you will be redirected to DevExpress.com to submit your response)
 <!-- feedback end -->
+
 
 
