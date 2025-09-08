@@ -43,5 +43,9 @@ For detailed instructions, refer to the following topic: [Customize Standard Aut
 
 * [Role-based Access Control, Permission Management, and OData / Web / REST API Services for Entity Framework and XPO ORM](https://github.com/DevExpress-Examples/XAF_Security_E4908)
 <!-- feedback -->
+## Does this example address your development requirements/objectives?
+
+[<img src="https://www.devexpress.com/support/examples/i/yes-button.svg"/>](https://www.devexpress.com/support/examples/survey.xml?utm_source=github&utm_campaign=xaf-custom-logon-parameters&~~~was_helpful=yes) [<img src="https://www.devexpress.com/support/examples/i/no-button.svg"/>](https://www.devexpress.com/support/examples/survey.xml?utm_source=github&utm_campaign=xaf-custom-logon-parameters&~~~was_helpful=no)
+
 (you will be redirected to DevExpress.com to submit your response)
 <!-- feedback end -->
