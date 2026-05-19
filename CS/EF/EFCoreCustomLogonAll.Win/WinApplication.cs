@@ -11,7 +11,6 @@ public class EFCoreCustomLogonAllWindowsFormsApplication : WinApplication {
         SplashScreen = new DXSplashScreen(typeof(XafSplashScreen), new DefaultOverlayFormOptions());
         ApplicationName = "EFCoreCustomLogonAll";
         CheckCompatibilityType = DevExpress.ExpressApp.CheckCompatibilityType.DatabaseSchema;
-        UseOldTemplates = false;
         DatabaseVersionMismatch += EFCoreCustomLogonAllWindowsFormsApplication_DatabaseVersionMismatch;
         CustomizeLanguagesList += EFCoreCustomLogonAllWindowsFormsApplication_CustomizeLanguagesList;
     }
